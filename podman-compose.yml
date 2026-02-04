@@ -44,6 +44,7 @@ services:
     # Persist data between container restarts
     volumes:
       - mysql_data:/var/lib/mysql
+      - .:/app
 
   # ---------------------------------------------------------------------------
   # Flask Application Container
