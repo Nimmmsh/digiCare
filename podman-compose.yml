@@ -1,0 +1,79 @@
+# =============================================================================
+# Podman Compose file for Patient Management System
+# =============================================================================
+# Two containers:
+#   1. mysql_db   - MySQL 8 database
+#   2. flask_app  - Flask application (depends on mysql_db)
+#
+# Usage:
+#   podman-compose up -d      # Start in background
+#   podman-compose down       # Stop and remove containers
+#   podman-compose logs -f    # Follow logs
+# =============================================================================
+
+version: "3.8"
+
+services:
+  # ---------------------------------------------------------------------------
+  # MySQL Database Container
+  # ---------------------------------------------------------------------------
+  mysql_db:
+    image: docker.io/library/mysql:8.0
+    container_name: patient_mysql
+    
+    # Environment variables for MySQL initialization
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: patient_db
+      MYSQL_USER: patient_user
+      MYSQL_PASSWORD: patient_pass
+    
+    # Port mapping: host:container
+    # Access MySQL from host at localhost:3306
+    ports:
+      - "3306:3306"
+    
+    # Health check: wait until MySQL is ready to accept connections
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "root", "-prootpassword"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+    
+    # Persist data between container restarts
+    volumes:
+      - mysql_data:/var/lib/mysql
+
+  # ---------------------------------------------------------------------------
+  # Flask Application Container
+  # ---------------------------------------------------------------------------
+  flask_app:
+    build:
+      context: .
+      dockerfile: Containerfile
+    container_name: patient_flask
+    
+    # Environment variables for Flask app
+    environment:
+      # Flask configuration
+      FLASK_ENV: development
+      SECRET_KEY: change-this-in-production-use-random-string
+      
+      # Database connection
+      # Note: 'mysql_db' is the service name, Podman resolves it to the container IP
+      DATABASE_URL: mysql+pymysql://patient_user:patient_pass@mysql_db:3306/patient_db
+    
+    # Port mapping: access Flask at http://localhost:5000
+    ports:
+      - "5000:5000"
+    
+    # Wait for MySQL to be healthy before starting Flask
+    depends_on:
+      mysql_db:
+        condition: service_healthy
+
+# Named volume for MySQL data persistence
+volumes:
+  mysql_data:
+

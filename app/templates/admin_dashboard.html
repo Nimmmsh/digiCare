@@ -1,0 +1,75 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<!--
+Admin Dashboard: Full visibility into all users and patients.
+Admins can see everything but we keep it read-only for simplicity.
+Add edit/delete functionality when needed.
+-->
+<h1 style="margin-bottom: 20px;">Admin Dashboard</h1>
+
+<!-- All Users Section -->
+<div class="card">
+    <h2>All Users ({{ users|length }})</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Username</th>
+                <th>Full Name</th>
+                <th>Email</th>
+                <th>Role</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for user in users %}
+            <tr>
+                <td>{{ user.id }}</td>
+                <td>{{ user.username }}</td>
+                <td>{{ user.full_name }}</td>
+                <td>{{ user.email }}</td>
+                <td><span class="badge badge-{{ user.role.name }}">{{ user.role.name }}</span></td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center; color: #666;">No users found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+
+<!-- All Patients Section -->
+<div class="card">
+    <h2>All Patient Details ({{ patients|length }})</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Patient Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Date of Birth</th>
+                <th>Medical Notes</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for details in patients %}
+            <tr>
+                <td>{{ details.user.full_name }}</td>
+                <td>{{ details.user.email }}</td>
+                <td>{{ details.phone or '-' }}</td>
+                <td>{{ details.date_of_birth or '-' }}</td>
+                <td>{{ details.medical_notes[:50] + '...' if details.medical_notes and details.medical_notes|length > 50 else details.medical_notes or '-' }}</td>
+            </tr>
+            {% else %}
+            <tr>
+                <td colspan="5" style="text-align: center; color: #666;">No patient details found.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}
+

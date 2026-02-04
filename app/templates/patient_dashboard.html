@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block title %}My Health Dashboard{% endblock %}
+
+{% block content %}
+<!--
+Patient Dashboard: Shows only the logged-in patient's own details.
+Patients can see their info and who their doctors are.
+Patients cannot edit their own medical records (doctors do that).
+-->
+<h1 style="margin-bottom: 20px;">My Health Dashboard</h1>
+
+<!-- Personal Information -->
+<div class="card">
+    <h2>My Information</h2>
+    <div class="detail-row">
+        <div class="detail-label">Full Name</div>
+        <div class="detail-value">{{ patient.full_name }}</div>
+    </div>
+    <div class="detail-row">
+        <div class="detail-label">Email</div>
+        <div class="detail-value">{{ patient.email }}</div>
+    </div>
+    <div class="detail-row">
+        <div class="detail-label">Phone</div>
+        <div class="detail-value">{{ details.phone if details and details.phone else 'Not on file' }}</div>
+    </div>
+    <div class="detail-row">
+        <div class="detail-label">Date of Birth</div>
+        <div class="detail-value">{{ details.date_of_birth if details and details.date_of_birth else 'Not on file' }}</div>
+    </div>
+</div>
+
+<!-- Medical Notes -->
+<div class="card">
+    <h2>Medical Notes</h2>
+    {% if details and details.medical_notes %}
+    <p style="white-space: pre-wrap;">{{ details.medical_notes }}</p>
+    {% else %}
+    <p style="color: #666;">No medical notes on file.</p>
+    {% endif %}
+</div>
+
+<!-- Assigned Doctors -->
+<div class="card">
+    <h2>My Doctors</h2>
+    {% if doctors %}
+    <table>
+        <thead>
+            <tr>
+                <th>Doctor Name</th>
+                <th>Email</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for doctor in doctors %}
+            <tr>
+                <td>{{ doctor.full_name }}</td>
+                <td>{{ doctor.email }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: #666;">No doctors assigned yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
+

@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}Edit Patient: {{ patient.full_name }}{% endblock %}
+
+{% block content %}
+<!--
+Patient Edit: Doctor edits a patient's details.
+Only medical notes and phone are editable by doctors.
+Personal info like name/email would be edited elsewhere (not implemented).
+-->
+<h1 style="margin-bottom: 20px;">Edit Patient</h1>
+
+<div class="card">
+    <h2>{{ patient.full_name }}</h2>
+    
+    <!-- Read-only info -->
+    <div class="detail-row">
+        <div class="detail-label">Email</div>
+        <div class="detail-value">{{ patient.email }}</div>
+    </div>
+    
+    <!-- Editable form -->
+    <form method="POST" style="margin-top: 20px; max-width: none;">
+        <div class="form-group">
+            <label for="phone">Phone Number</label>
+            <input type="text" id="phone" name="phone" 
+                   value="{{ details.phone if details else '' }}"
+                   placeholder="e.g., (555) 123-4567">
+        </div>
+        
+        <div class="form-group">
+            <label for="medical_notes">Medical Notes</label>
+            <textarea id="medical_notes" name="medical_notes" 
+                      placeholder="Enter medical notes, observations, treatment plans...">{{ details.medical_notes if details else '' }}</textarea>
+        </div>
+        
+        <button type="submit" class="btn">Save Changes</button>
+        <a href="{{ url_for('main.doctor_view_patient', patient_id=patient.id) }}" class="btn btn-secondary">Cancel</a>
+    </form>
+</div>
+{% endblock %}
+

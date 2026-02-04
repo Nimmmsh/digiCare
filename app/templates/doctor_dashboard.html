@@ -1,0 +1,44 @@
+{% extends "base.html" %}
+
+{% block title %}Doctor Dashboard{% endblock %}
+
+{% block content %}
+<!--
+Doctor Dashboard: Shows only patients assigned to this doctor.
+Doctors can view and edit their patients' medical notes.
+-->
+<h1 style="margin-bottom: 20px;">Doctor Dashboard</h1>
+
+<div class="card">
+    <h2>My Patients ({{ patients|length }})</h2>
+    
+    {% if patients %}
+    <table>
+        <thead>
+            <tr>
+                <th>Patient Name</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for patient, details in patients %}
+            <tr>
+                <td>{{ patient.full_name }}</td>
+                <td>{{ patient.email }}</td>
+                <td>{{ details.phone if details else '-' }}</td>
+                <td>
+                    <a href="{{ url_for('main.doctor_view_patient', patient_id=patient.id) }}" class="btn btn-small">View</a>
+                    <a href="{{ url_for('main.doctor_edit_patient', patient_id=patient.id) }}" class="btn btn-small btn-secondary">Edit</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% else %}
+    <p style="color: #666; padding: 20px 0;">No patients assigned to you yet.</p>
+    {% endif %}
+</div>
+{% endblock %}
+
